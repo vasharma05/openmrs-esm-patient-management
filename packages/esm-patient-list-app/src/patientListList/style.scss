@@ -1,9 +1,28 @@
+@import "carbon-components/scss/globals/scss/typography.scss";
+@import "~@openmrs/esm-styleguide/src/vars";
+
 :global(.deactivate-tabs-content) {
   display: none;
 }
 
 :global(.bx--data-table-container) {
   padding: 1rem;
+}
+
+.productiveHeading01 {
+  @include carbon--type-style("productive-heading-01");
+}
+
+.productiveHeading02 {
+  @include carbon--type-style("productive-heading-02");
+}
+
+.bodyLong01 {
+  @include carbon--type-style("body-long-01");
+}
+
+.secondaryText {
+  color:#525252;
 }
 
 title {

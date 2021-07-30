@@ -52,9 +52,30 @@ export interface OpenmrsCohortMember {
   };
 }
 
-interface CohortRepsonse<T> {
+interface CohortResponse<T> {
   results: Array<T>;
   error: any;
+}
+
+export async function getPatientListDetails(patientListUuid: string, abortController: AbortController) {
+  const { data } = await openmrsFetch<OpenmrsCohort>(`${cohortUrl}/cohort/${patientListUuid}`, {
+    signal: abortController.signal,
+  });
+  return data;
+}
+
+export async function fetchPatientListMembers(patientListUuid: string, abortController: AbortController) {
+  const {
+    data: { results, error },
+  } = await openmrsFetch(`${cohortUrl}/cohortmember?cohort=${patientListUuid}&v=default`, {
+    signal: abortController.signal,
+  });
+
+  if (error) {
+    throw error;
+  }
+
+  return results;
 }
 
 export async function getAllPatientLists(filter: PatientListFilter = {}, ac = new AbortController()) {
@@ -77,7 +98,7 @@ export async function getAllPatientLists(filter: PatientListFilter = {}, ac = ne
   const params = query.map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
   const {
     data: { results, error },
-  } = await openmrsFetch<CohortRepsonse<OpenmrsCohort>>(`${cohortUrl}/cohort?${params}`, {
+  } = await openmrsFetch<CohortResponse<OpenmrsCohort>>(`${cohortUrl}/cohort?${params}`, {
     signal: ac.signal,
   });
 
@@ -91,7 +112,7 @@ export async function getAllPatientLists(filter: PatientListFilter = {}, ac = ne
 export async function getPatientListMembers(cohortUuid: string, ac = new AbortController()) {
   const {
     data: { results, error },
-  } = await openmrsFetch<CohortRepsonse<OpenmrsCohortMember>>(
+  } = await openmrsFetch<CohortResponse<OpenmrsCohortMember>>(
     `${cohortUrl}/cohortmember?cohort=${cohortUuid}&v=default`,
     {
       signal: ac.signal,
@@ -115,7 +136,7 @@ export async function getPatientListMembers(cohortUuid: string, ac = new AbortCo
 export async function getPatientListsForPatient(patientUuid: string, ac = new AbortController()) {
   const {
     data: { results, error },
-  } = await openmrsFetch<CohortRepsonse<OpenmrsCohortRef>>(
+  } = await openmrsFetch<CohortResponse<OpenmrsCohortRef>>(
     `${cohortUrl}/cohortmember?patient=${patientUuid}&v=default`,
     {
       signal: ac.signal,
