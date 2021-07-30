@@ -23,12 +23,12 @@ function setupOpenMRS() {
   registerBreadcrumbs([
     {
       path: spaBasePath,
-      title: 'Patient List',
+      title: 'Patient Lists',
       parent: `${window.spaBase}/home`,
     },
     {
-      path: `${spaBasePath}/:view?`,
-      title: ([x]) => `${x} Dashboard`,
+      path: `${spaBasePath}/:patientListUuid?`,
+      title: ([x]) => `${x}`,
       parent: spaBasePath,
     },
   ]);
@@ -36,8 +36,14 @@ function setupOpenMRS() {
   return {
     pages: [
       {
-        load: getAsyncLifecycle(() => import('./patientListList'), options),
+        load: getAsyncLifecycle(() => import('./patientListDetails'), options),
         route,
+        online: { syncUserPropertiesChangesOnLoad: true },
+        offline: { syncUserPropertiesChangesOnLoad: false },
+      },
+      {
+        load: getAsyncLifecycle(() => import('./root.component'), options),
+        route: `${route}/:patientListUuid`,
         online: { syncUserPropertiesChangesOnLoad: true },
         offline: { syncUserPropertiesChangesOnLoad: false },
       },
